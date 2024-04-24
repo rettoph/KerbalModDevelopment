@@ -1,0 +1,7 @@
+[
+	{
+		"name": "TrackingStationFolders",
+		"source": "mods\\TrackingStationFolders\\TrackingStationFolders.csproj",
+		"enabled": true
+	}
+]

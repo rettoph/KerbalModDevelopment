@@ -1,6 +1,3 @@
-[submodule "libraries/KerbalModderTools"]
-	path = libraries/KerbalModderTools
-	url = https://github.com/rettoph/KerbalModderTools
 [submodule "mods/TrackingStationFolders"]
 	path = mods/TrackingStationFolders
 	url = https://github.com/rettoph/TrackingStationFolders

@@ -7,9 +7,17 @@ namespace KerbalModDevelopment.Services
     {
         private readonly ILogger _logger;
 
-        public DirectoryService(ILogger logger)
+        public readonly string SolutionDirectory;
+        public readonly string DevelopmentDirectory;
+        public readonly string SteamDirectory;
+
+        public DirectoryService(SettingService settings, ILogger logger)
         {
             _logger = logger;
+
+            this.SolutionDirectory = settings.Get(nameof(this.SolutionDirectory));
+            this.DevelopmentDirectory = this.GetFullPath(settings.Get(nameof(this.DevelopmentDirectory)));
+            this.SteamDirectory = this.GetFullPath(settings.Get(nameof(this.SteamDirectory)));
         }
 
         public DirectoryInfo CreateDirectory(string path)
@@ -60,6 +68,11 @@ namespace KerbalModDevelopment.Services
         public FileSystemInfo CreateSymbolicLink(string path, string pathToTarget)
         {
             return Directory.CreateSymbolicLink(path, pathToTarget);
+        }
+
+        public string GetFullPath(string path)
+        {
+            return Path.GetFullPath(path, this.SolutionDirectory);
         }
     }
 }

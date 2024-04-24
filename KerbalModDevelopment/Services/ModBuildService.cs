@@ -6,20 +6,20 @@ namespace KerbalModDevelopment.Services
 {
     internal class ModBuildService
     {
+        private readonly SettingService _settings;
         private readonly EnvironmentService _environment;
         private readonly ILogger _logger;
+        private readonly DirectoryService _directory;
 
         public readonly ModConfiguration[] Mods;
-        public readonly string DevelopmentDirectory;
-        public readonly string SolutionDirectory;
 
-        public ModBuildService(SettingService settings, EnvironmentService environment, ILogger logger)
+        public ModBuildService(SettingService settings, EnvironmentService environment, DirectoryService directory, ILogger logger)
         {
+            _settings = settings;
             _logger = logger;
             _environment = environment;
+            _directory = directory;
             this.Mods = settings.Get<ModConfiguration[]>(nameof(Mods));
-            this.DevelopmentDirectory = settings.Get(nameof(DevelopmentDirectory));
-            this.SolutionDirectory = settings.Get(nameof(SolutionDirectory));
         }
 
         public bool BuildAll()
@@ -30,7 +30,7 @@ namespace KerbalModDevelopment.Services
 
                 foreach (ModConfiguration mod in this.Mods)
                 {
-                    if (mod.Enabled == false)
+                    if (mod.Build == false)
                     {
                         continue;
                     }
@@ -53,14 +53,35 @@ namespace KerbalModDevelopment.Services
         {
             _logger.Information("Building {ModName}", mod.Name);
 
-            string deployTargetPath = Path.GetFullPath(Path.Combine(this.SolutionDirectory, mod.Source));
-            string deployTargetOutput = Path.GetFullPath(Path.Combine(this.DevelopmentDirectory, Constants.GameData, mod.Name));
+            try
+            {
+                if (this.TryBuild(mod, out string bin) == false)
+                {
+                    return false;
+                }
 
-            string cmd = $"build \"{deployTargetPath}\" -o \"{deployTargetOutput}\" -r any -c Debug /p:Platform=AnyCPU";
-            _logger.Verbose("Running {cmd}", cmd);
+                if (mod.Deploy && this.TryDeploy(bin, mod) == false)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Unexpected error building {ModName}", mod.Name);
+                return false;
+            }
+        }
+
+        private bool TryBuild(ModConfiguration mod, out string output)
+        {
+            string cmd = this.BuildBuildCommand(mod, out output);
 
             try
             {
+                _logger.Verbose("Running {cmd}", cmd);
+
                 var process = new Process()
                 {
                     StartInfo = new ProcessStartInfo()
@@ -103,9 +124,52 @@ namespace KerbalModDevelopment.Services
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "Unexpected error building {ModName}", mod.Name);
+                _logger.Error(ex, "Unexpected error building {input}", mod.Name);
                 return false;
             }
+        }
+
+        private bool TryDeploy(string bin, ModConfiguration mod)
+        {
+            string target = Path.Combine(_directory.DevelopmentDirectory, Constants.GameData, mod.Name);
+
+            try
+            {
+                if (Directory.Exists(target))
+                {
+                    Directory.Delete(target);
+                }
+
+                Directory.CreateSymbolicLink(target, bin);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Unexpected error creating symlink to {target}", target);
+                return false;
+            }
+        }
+
+        private string BuildBuildCommand(ModConfiguration mod, out string output)
+        {
+            string input = Path.Combine(_directory.SolutionDirectory, mod.Project);
+            output = Path.Combine(_directory.SolutionDirectory, "out", mod.Name);
+
+            string cmd = $"build \"{input}\" -o \"{output}\" -r any -c Debug /p:Platform=AnyCPU";
+
+            foreach ((string key, string value) in mod.BuildProperties)
+            {
+                cmd += $" /p:{key}=\"{_settings.Resolve(value)}\"";
+            }
+
+            if (string.IsNullOrEmpty(mod.Solution) == false)
+            {
+                cmd += $" /p:SolutionDir=\"{Path.GetDirectoryName(_directory.GetFullPath(mod.Solution))}\"";
+            }
+
+
+            return cmd;
         }
     }
 }

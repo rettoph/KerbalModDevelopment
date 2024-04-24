@@ -1,16 +1,17 @@
-﻿using System.Text.Json.Serialization;
-
-namespace KerbalModDevelopment.Models
+﻿namespace KerbalModDevelopment.Models
 {
     internal class ModConfiguration
     {
-        [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
 
-        [JsonPropertyName("source")]
-        public string Source { get; set; } = string.Empty;
+        public string Project { get; set; } = string.Empty;
 
-        [JsonPropertyName("enabled")]
-        public bool Enabled { get; set; }
+        public string Solution { get; set; } = string.Empty;
+
+        public bool Build { get; set; } = true;
+
+        public Dictionary<string, string> BuildProperties { get; set; } = new();
+
+        public bool Deploy { get; set; } = true;
     }
 }

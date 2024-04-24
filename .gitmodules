@@ -1,3 +1,9 @@
 [submodule "mods/TrackingStationFolders"]
 	path = mods/TrackingStationFolders
 	url = https://github.com/rettoph/TrackingStationFolders
+[submodule "mods/ClickThroughBlocker"]
+	path = mods/ClickThroughBlocker
+	url = https://github.com/rettoph/ClickThroughBlocker
+[submodule "mods/ToolbarControl"]
+	path = mods/ToolbarControl
+	url = https://github.com/rettoph/ToolbarControl

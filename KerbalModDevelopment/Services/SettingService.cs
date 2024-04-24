@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace KerbalModDevelopment.Services
 {
-    internal sealed class SettingService
+    public sealed class SettingService
     {
         private IConfiguration _configuration;
 
@@ -27,6 +28,19 @@ namespace KerbalModDevelopment.Services
 
 
             return result ?? throw new KeyNotFoundException(key);
+        }
+
+        private const string _pattern = @"\[(.*)\]";
+        public string Resolve(string value)
+        {
+            Match match = Regex.Match(value, _pattern);
+            if (match.Success)
+            {
+                value = match.Groups[1].Value;
+                value = this.Get(value);
+            }
+
+            return value;
         }
     }
 }

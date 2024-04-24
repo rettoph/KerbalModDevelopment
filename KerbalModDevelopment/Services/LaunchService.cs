@@ -24,6 +24,8 @@ namespace KerbalModDevelopment.Services
         {
             try
             {
+                this.KillRunningInstances();
+
                 if (_install.Verify(false) == false)
                 {
                     _logger.Error($"Error verifying game installation...");
@@ -36,8 +38,6 @@ namespace KerbalModDevelopment.Services
                     _logger.Error($"Error building mods...");
                     return;
                 }
-
-                this.KillRunningInstances();
 
                 string exe = Path.Combine(this.DevelopmentDirectory, Constants.KSP_x64_Dbg_Exe);
                 Process.Start(exe);

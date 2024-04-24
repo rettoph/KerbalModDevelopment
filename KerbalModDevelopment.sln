@@ -17,11 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "mods", "mods", "{1B550199-F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TrackingStationFolders", "TrackingStationFolders", "{F2416277-DF6A-40FC-8C8F-C470EDEB16FB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5E3DF33C-7E8A-4CFD-AF68-E47322FA86BE}"
-	ProjectSection(SolutionItems) = preProject
-		mods.config.json = mods.config.json
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackingStationFolders", "mods\TrackingStationFolders\TrackingStationFolders.csproj", "{09B317BC-48C9-455B-A0DB-67C1498BCD42}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KerbalModDevelopment", "KerbalModDevelopment\KerbalModDevelopment.csproj", "{0A052BFD-144E-49E4-953A-F3560FD365A0}"

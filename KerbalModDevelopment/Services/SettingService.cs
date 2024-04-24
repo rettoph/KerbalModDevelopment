@@ -1,10 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace KerbalModDevelopment.Services
 {
@@ -12,11 +7,17 @@ namespace KerbalModDevelopment.Services
     {
         private IConfiguration _configuration;
 
-        public string SteamDirectory
-
         public SettingService(IConfiguration configuration)
         {
             _configuration = configuration;
+        }
+
+        public string Get(string key)
+        {
+            string? result = _configuration.GetSection(key).Value;
+            result ??= Environment.GetEnvironmentVariable(key);
+
+            return result ?? throw new KeyNotFoundException(key);
         }
 
         public T Get<T>(string key)

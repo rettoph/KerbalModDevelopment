@@ -33,11 +33,15 @@ namespace KerbalModDevelopment.Services
         private const string _pattern = @"\[(.*)\]";
         public string Resolve(string value)
         {
-            Match match = Regex.Match(value, _pattern);
-            if (match.Success)
+            Match match;
+            while ((match = Regex.Match(value, _pattern)) is not null)
             {
-                value = match.Groups[1].Value;
-                value = this.Get(value);
+                if (match.Success == false)
+                {
+                    break;
+                }
+
+                value = value.Replace(match.Value, this.Get(match.Groups[1].Value));
             }
 
             return value;

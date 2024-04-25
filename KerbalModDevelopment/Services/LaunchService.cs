@@ -7,17 +7,15 @@ namespace KerbalModDevelopment.Services
     {
         private readonly GameInstallationService _install;
         private readonly ModBuildService _builder;
+        private readonly DirectoryService _directory;
         private readonly ILogger _logger;
 
-        public readonly string DevelopmentDirectory;
-
-        public LaunchService(GameInstallationService gameInstallation, ModBuildService builder, SettingService settings, ILogger logger)
+        public LaunchService(GameInstallationService gameInstallation, ModBuildService builder, SettingService settings, DirectoryService directory, ILogger logger)
         {
             _install = gameInstallation;
             _builder = builder;
+            _directory = directory;
             _logger = logger;
-
-            this.DevelopmentDirectory = settings.Get(nameof(DevelopmentDirectory));
         }
 
         public void TryLaunch()
@@ -39,7 +37,7 @@ namespace KerbalModDevelopment.Services
                     return;
                 }
 
-                string exe = Path.Combine(this.DevelopmentDirectory, Constants.KSP_x64_Dbg_Exe);
+                string exe = Path.Combine(_directory.DevelopmentDirectory, Constants.KSP_x64_Dbg_Exe);
                 Process.Start(exe);
 
                 Console.WriteLine("KSP has been started. To debug open Debug > Attach Unity Debugger");

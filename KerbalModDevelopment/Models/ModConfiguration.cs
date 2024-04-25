@@ -10,6 +10,8 @@
 
         public bool Build { get; set; } = true;
 
+        public string? BuildArgs { get; set; }
+
         public Dictionary<string, string> BuildProperties { get; set; } = new();
 
         public bool Deploy { get; set; } = true;

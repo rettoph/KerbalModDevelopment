@@ -158,6 +158,11 @@ namespace KerbalModDevelopment.Services
 
             string cmd = $"build \"{input}\" -o \"{output}\" -r any -c Debug /p:Platform=AnyCPU";
 
+            if (string.IsNullOrEmpty(mod.BuildArgs) == false)
+            {
+                cmd += $" {mod.BuildArgs}";
+            }
+
             foreach ((string key, string value) in mod.BuildProperties)
             {
                 cmd += $" /p:{key}=\"{_settings.Resolve(value)}\"";

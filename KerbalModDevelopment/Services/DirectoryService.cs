@@ -10,6 +10,7 @@ namespace KerbalModDevelopment.Services
         public readonly string SolutionDirectory;
         public readonly string DevelopmentDirectory;
         public readonly string SteamDirectory;
+        public readonly string UnityDirectory;
 
         public DirectoryService(SettingService settings, ILogger logger)
         {
@@ -17,7 +18,7 @@ namespace KerbalModDevelopment.Services
 
             this.SolutionDirectory = settings.Get(nameof(this.SolutionDirectory));
             this.DevelopmentDirectory = this.GetFullPath(settings.Get(nameof(this.DevelopmentDirectory)));
-            this.SteamDirectory = this.GetFullPath(settings.Get(nameof(this.SteamDirectory)));
+            this.UnityDirectory = this.GetFullPath(settings.Get(nameof(this.UnityDirectory)));
         }
 
         public DirectoryInfo CreateDirectory(string path)

@@ -7,3 +7,6 @@
 [submodule "mods/ToolbarControl"]
 	path = mods/ToolbarControl
 	url = https://github.com/rettoph/ToolbarControl
+[submodule "mods/KerbalSimpitRevamped"]
+	path = mods/KerbalSimpitRevamped
+	url = https://github.com/Simpit-team/KerbalSimpitRevamped/

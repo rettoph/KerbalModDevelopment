@@ -14,18 +14,10 @@ namespace KerbalModDevelopment.Services
         private readonly ILogger _logger;
         private readonly DirectoryService _directory;
 
-        public readonly string DevelopmentDirectory;
-        public readonly string SteamDirectory;
-        public readonly string UnityDirectory;
-
         public GameInstallationService(SettingService settings, DirectoryService directory, ILogger logger)
         {
             _logger = logger;
             _directory = directory;
-
-            this.SteamDirectory = settings.Get(nameof(SteamDirectory));
-            this.DevelopmentDirectory = settings.Get(nameof(DevelopmentDirectory));
-            this.UnityDirectory = settings.Get(nameof(UnityDirectory));
         }
 
         public bool Verify(bool force)
@@ -37,7 +29,7 @@ namespace KerbalModDevelopment.Services
                     return false;
                 }
 
-                if (force == false && _directory.Exists(this.DevelopmentDirectory))
+                if (force == false && _directory.Exists(_directory.DevelopmentDirectory))
                 { // Install exists and is not forced
                     return true;
                 }
@@ -64,7 +56,7 @@ namespace KerbalModDevelopment.Services
 
         private bool DeleteExistingInstallationIfExists()
         {
-            if (Directory.Exists(this.DevelopmentDirectory) == false)
+            if (Directory.Exists(_directory.DevelopmentDirectory) == false)
             {
                 return true;
             }
@@ -72,7 +64,7 @@ namespace KerbalModDevelopment.Services
             _logger.Information($"{nameof(GameInstallationService)}::{nameof(DeleteExistingInstallationIfExists)} - Deleting Existing Development Install...");
             try
             {
-                Directory.Delete(this.DevelopmentDirectory, true);
+                Directory.Delete(_directory.DevelopmentDirectory, true);
 
                 return true;
             }
@@ -89,14 +81,14 @@ namespace KerbalModDevelopment.Services
 
             try
             {
-                _directory.CreateDirectory(this.DevelopmentDirectory);
+                _directory.CreateDirectory(_directory.DevelopmentDirectory);
 
-                if (_directory.Exists(this.SteamDirectory) == false)
+                if (_directory.Exists(_directory.SteamDirectory) == false)
                 {
                     return false;
                 }
 
-                _directory.CopyRecursive(this.SteamDirectory, this.DevelopmentDirectory);
+                _directory.CopyRecursive(_directory.SteamDirectory, _directory.DevelopmentDirectory);
 
                 return true;
             }
@@ -114,16 +106,16 @@ namespace KerbalModDevelopment.Services
             try
             {
                 _logger.Verbose($"{nameof(GameInstallationService)}::{nameof(CopyUnityDebugFilesToDevelopmentDirectory)} - Updating {Constants.Boot_Config}...");
-                File.AppendAllText(Path.Combine(this.DevelopmentDirectory, Constants.KSP_x64_Data, Constants.Boot_Config), "player-connection-debug=1");
+                File.AppendAllText(Path.Combine(_directory.DevelopmentDirectory, Constants.KSP_x64_Data, Constants.Boot_Config), "player-connection-debug=1");
 
                 foreach ((string source, string target) in GameInstallationService.UnityFiles)
                 {
                     _logger.Verbose($"{nameof(GameInstallationService)}::{nameof(CopyUnityDebugFilesToDevelopmentDirectory)} - Copying Unity file {source} => {target}...");
-                    File.Copy(Path.Combine(this.UnityDirectory, source), Path.Combine(this.DevelopmentDirectory, target), true);
+                    File.Copy(Path.Combine(_directory.UnityDirectory, source), Path.Combine(_directory.DevelopmentDirectory, target), true);
                 }
 
                 _logger.Verbose($"{nameof(GameInstallationService)}::{nameof(CopyUnityDebugFilesToDevelopmentDirectory)} - Creating SymLink...");
-                _directory.CreateSymbolicLink(Path.Combine(this.DevelopmentDirectory, Constants.KSP_x64_Dbg_Data), Path.Combine(this.DevelopmentDirectory, Constants.KSP_x64_Data));
+                _directory.CreateSymbolicLink(Path.Combine(_directory.DevelopmentDirectory, Constants.KSP_x64_Dbg_Data), Path.Combine(_directory.DevelopmentDirectory, Constants.KSP_x64_Data));
 
                 return true;
             }
